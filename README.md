@@ -1,7 +1,7 @@
 Plugin Top Reputation and Posts
 =======
 
-Plugin pokazuje ranking użytkowników według postów lub reputacji (możliwość konfiguracji)
+Plugin pokazuje ranking użytkowników według postów lub reputacji (możliwość konfiguracji). 
 Możliwość łatwej edycji wyglądu z poziomu szablonów (style i szablony ~> szablony ~> szablony globalne ~> top_rep oraz top_rep_trow)
 
 #Instalacja
