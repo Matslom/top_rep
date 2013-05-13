@@ -66,7 +66,7 @@ reputation=Reputacji',
 $template_table = '<table border="0" cellspacing="{$theme[borderwidth]}" cellpadding="{$theme[tablespace]}" class="tborder" style="clear: both; border-bottom-width: 0;">
 <tr>
 <td class="thead" colspan="2">
-Ranking użytkowników
+<strong>Ranking użytkowników</strong>
  </td>
 </tr>
 {$top_rep_trow}
