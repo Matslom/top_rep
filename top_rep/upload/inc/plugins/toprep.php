@@ -63,7 +63,8 @@ reputation=Reputacji',
 	$db->insert_query('settings', $toprep_order);
 	rebuild_settings(); 
 
-$template_table = '<table border="0" cellspacing="{$theme[borderwidth]}" cellpadding="{$theme[tablespace]}" class="tborder" style="clear: both; border-bottom-width: 0;">
+$template_table = '<!--Plugin top_rep by Matslom--> 
+<table border="0" cellspacing="{$theme[borderwidth]}" cellpadding="{$theme[tablespace]}" class="tborder" style="clear: both; border-bottom-width: 0;">
 <tr>
 <td class="thead" colspan="2">
 <strong>Ranking użytkowników</strong>
