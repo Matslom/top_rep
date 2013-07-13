@@ -28,6 +28,12 @@ function toprep_install()
    $query = $db->simple_select("settinggroups", "gid", "name = 'toprep'", array("limit" => 1));
 	$gid = $db->fetch_field($query, "gid");
 
+	$styl = 'max-height: 30px; 
+		 max-width: 30px; 
+		 float: left; 
+		 margin: 5px;
+		 padding: 0 2px 0 0;';
+
 	$toprep_limit = array(
 		'name'			=> 'topreplimit',
 		'title'			=> 'Ilość wyświetlanych użytkowników',
@@ -37,25 +43,14 @@ function toprep_install()
 		'disporder'		=> '1', 
 		'gid'			=> intval($gid)
 	);
-/*	$toprep_show = array(
-		'name'			=> 'toprepshow',
-		'title'			=> 'Wyświetlanie postów i reputacji',
-		'description'	=> 'Wyświetlać tylko posty, czy reputację, a może obie opcje?',
-		'optionscode'	=> 'select
-posts=Tylko posty
-reputation=Tylko reputację
-two=Wyświetlaj posty i reputację', 
-		'value'			=> 'two', 
-		'disporder'		=> '2', 
-		'gid'			=> intval($gid)
-	); */
+
 		$toprep_order = array(
 		'name'			=> 'topreporder',
 		'title'			=> 'Sortuj według:',
 		'description'	=> 'Wybierz według jakieś wartości plugin ma pokazywać ranking?',
 		'optionscode'	=> 'select
-posts=Postów
-reputation=Reputacji', 
+		posts=Postów
+		reputation=Reputacji', 
 		'value'			=> 'reputation', 
 		'disporder'		=> '3', 
 		'gid'			=> intval($gid)
@@ -81,11 +76,43 @@ reputation=Reputacji',
 		'gid'			=> intval($gid)
 	);
 
+	$toprep_awatar = array(
+		'name'			=> 'toprep_awatar',
+		'title'			=> 'Wyświetlanie awatarów na liście',
+		'description'	=> 'Włączenie lub wyłączenie pokazywania awatarów w pluginie',
+		'optionscode'	=> 'yesno', 
+		'value'			=> '1', 
+		'disporder'		=> '6', 
+		'gid'			=> intval($gid)
+	);
+
+	$toprep_dafault_a = array(
+		'name'			=> 'toprepdef_avatar',
+		'title'			=> 'Ścieżka do domyślnego awatara',
+		'description'	=> 'Podaj ścieżkę do domyślnego awatara w przypadku gdy użytkownik go nie posiada',
+		'optionscode'	=> 'text', 
+		'value'			=> './images/default_avatar.gif', 
+		'disporder'		=> '7', 
+		'gid'			=> intval($gid)
+	);
+
+	$toprep_style = array(
+		'name'			=> 'toprepstyle',
+		'title'			=> 'Styl wyświetlania awatarów',
+		'description'	=> 'Za pomocą języka CSS, określ jaki mają mieć wygląd awatary w pluginie',
+		'optionscode'	=> 'textarea', 
+		'value'			=> $styl, 
+		'disporder'		=> '8', 
+		'gid'			=> intval($gid)
+	);
+
 	$db->insert_query('settings', $toprep_limit);
 	$db->insert_query('settings', $toprep_install);
-	/*$db->insert_query('settings', $toprep_show);*/
 	$db->insert_query('settings', $toprep_order);
 	$db->insert_query('settings', $toprep_groups);
+	$db->insert_query('settings', $toprep_awatar);
+	$db->insert_query('settings', $toprep_dafault_a);
+	$db->insert_query('settings', $toprep_style);
 	rebuild_settings(); 
 
 $template_table = '<table border="0" cellspacing="{$theme[borderwidth]}" cellpadding="{$theme[tablespace]}" class="tborder" style="clear: both; border-bottom-width: 0;">
@@ -97,12 +124,12 @@ Ranking użytkowników
 {$top_rep_trow}
 </table>';
 $template_tr = '
-<tr><td class="trow2">
-{$nick} 
+<tr><td class="trow2" style="vertical-align:middle;">
+{$show_awatar} {$nick} 
 <div style="float:right; padding-right: 5px;">
 <span style="background:  #D8D8D8; border: 1px solid #E2E2E2;padding: 1px 6px !important; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: black;">
-{$top_rep[\'postnum\']}</span>
-<span style=" background: #7BA60D; border: 1px solid #8DBE0D; padding: 1px 6px !important; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: white;"> {$top_rep[\'reputation\']} </span>
+<a title="Posty">{$top_rep[\'postnum\']}</a></span>
+<span style=" background: #7BA60D; border: 1px solid #8DBE0D; padding: 1px 6px !important; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: white;"> <a title="Reputacja">{$top_rep[\'reputation\']}</a> </span>
 
 </div>
 </td></tr>';
@@ -127,7 +154,7 @@ function toprep_uninstall()
 {
 	global $mybb, $db;
 
-	$db->write_query("DELETE FROM ".TABLE_PREFIX."settings WHERE name IN ('topreplimit', 'toprepinstall', 'toprepshow', 'toprepgroups' )");
+	$db->write_query("DELETE FROM ".TABLE_PREFIX."settings WHERE name IN ('topreplimit', 'toprepinstall', 'toprepshow', 'toprepgroups', 'toprepawatar', 'toprepdef_avatar', 'toprepstyle' )");
 	$db->write_query("DELETE FROM ".TABLE_PREFIX."settinggroups WHERE name = 'toprep'");
 	rebuild_settings();
 	$db->query("DELETE FROM ".TABLE_PREFIX."templates WHERE title IN('top_rep', 'top_rep_trow')");
@@ -173,11 +200,20 @@ else {
 	
 while($top_rep = $db->fetch_array($query))
 	{
-	$rep = $top_rep['reputation'];
+
+	if($top_rep['avatar'] == null) { 
+	$top_rep['avatar'] = $mybb->settings['toprepdef_avatar']; }
+	$awatar = "<a href=\"".$mybb->settings['bburl']."/".get_profile_link($top_rep['uid'])."\"><img src=\"".$top_rep['avatar']."\" alt=\"avatar\" style=\"".$mybb->settings['toprepstyle']."\"  class=\"favimg toprep_avatar\" /></a>";
 	$usernameFormatted = format_name($top_rep['username'], $top_rep['usergroup'], $top_rep['displaygroup']);
-   $nick= '<a href="member.php?action=profile&uid='.intval($top_rep['uid']).'"> '.$usernameFormatted.'</a>';
+    $top_rep['showNick'] = '<a href="member.php?action=profile&uid='.intval($top_rep['uid']).'"> '.$usernameFormatted.'</a>';
+    if($mybb->settings['toprep_awatar'] == '1' ) { 
+    	$top_rep['showAwatar'] = $awatar;
+    	$top_rep['displayStyle'] = 'line-height: 40px;';
+    	 }
+	
 	eval('$top_rep_trow .= "'.$templates->get("top_rep_trow").'";');
-		}
+	}
+
 eval('$toprep = "'.$templates->get('top_rep').'";');
 
 }
