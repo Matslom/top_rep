@@ -13,7 +13,7 @@ function toprep_info()
 		"description"		=> "Plugin pokazujący top x użytkowników z największą reputacją lub postami.",
 		"website"		=> "http://www.mybboad.pl",
 		"author"		=> "Matslom",
-		"authorsite"		=> "http://www.mybboad.pl",
+		"authorsite"		=> "http://www.matslom.pl",
 		"version"		=> "1.0.0",
 		"guid" 			=> "*",
 		"compatibility"	=> "16*"
@@ -124,13 +124,13 @@ Ranking użytkowników
 {$top_rep_trow}
 </table>';
 $template_tr = '
-<tr><td class="trow2" style="vertical-align:middle;">
-{$show_awatar} {$nick} 
+<tr><td class="trow2" style="{$top_rep[\'displayStyle\']}">
+{$top_rep[\'showAwatar\']} {$top_rep[\'showNick\']}
 <div style="float:right; padding-right: 5px;">
 <span style="background:  #D8D8D8; border: 1px solid #E2E2E2;padding: 1px 6px !important; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: black;">
-<a title="Posty">{$top_rep[\'postnum\']}</a></span>
-<span style=" background: #7BA60D; border: 1px solid #8DBE0D; padding: 1px 6px !important; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: white;"> <a title="Reputacja">{$top_rep[\'reputation\']}</a> </span>
-
+{$top_rep[\'postnum\']}</span>
+<span style=" background: #7BA60D; border: 1px solid #8DBE0D; padding: 1px 6px !important; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: white;"> 
+{$top_rep[\'reputation\']}</span>
 </div>
 </td></tr>';
 
